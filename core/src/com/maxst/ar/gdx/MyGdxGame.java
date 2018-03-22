@@ -60,7 +60,7 @@ public class MyGdxGame {
 				new Material(ColorAttribute.createDiffuse(Color.GREEN)),
 				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
 		ModelInstance cube = new ModelInstance(model);
-		cube.transform.setTranslation(-5,0,5);
+		cube.transform.setTranslation(0,0,0);
 		instances.add(cube);
 
 		assets.load(MODEL_NAME, Model.class);
@@ -84,16 +84,20 @@ public class MyGdxGame {
 
 	//FIXME
 	public void showTrackingResult(float[] _projectionMatrix, float[] _poseMatrix){
+		Matrix4 maxSTMVP = new Matrix4(_projectionMatrix);
+		maxSTMVP.mul(new Matrix4(_poseMatrix));
+		maxSTMVP.inv();
+
+		float [] mvp = maxSTMVP.getValues();
+
+		camera.position.set(mvp[12], mvp[13], mvp[14]);
+		camera.up.set(mvp[4], mvp[5], mvp[6]);
+		camera.lookAt(mvp[8], mvp[9], mvp[10]);
+		camera.update();
+
 		ModelInstance model = instances.first();
-
-		camera.position.setZero();
-		camera.up.setZero();
-		camera.direction.setZero();
-		camera.transform(new Matrix4(_projectionMatrix));
-
-		float[] maxSTMVP = new float[16];
-
-		model.transform.set(new Matrix4(_poseMatrix));
+		model.transform.set(new Matrix4());
+		model.transform.translate(mvp[8], mvp[9], mvp[10]);
 	}
 
 	public void resize(int width, int height) {
