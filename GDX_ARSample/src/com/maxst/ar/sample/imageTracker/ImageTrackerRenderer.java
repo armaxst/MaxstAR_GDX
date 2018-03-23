@@ -55,7 +55,7 @@ class ImageTrackerRenderer extends ApplicationAdapter {
 	public void resize(int width, int height) {
 		surfaceWidth = width;
 		surfaceHeight = height;
-
+		myARGdxGame.resize(width,height);
 		MaxstAR.onSurfaceChanged(width, height);
 	}
 
@@ -83,6 +83,8 @@ class ImageTrackerRenderer extends ApplicationAdapter {
 			texturedCube.setTranslate(0, 0, -0.025f);
 			texturedCube.setScale(0.15f, 0.15f, 0.05f);
 			texturedCube.draw();
+
+			myARGdxGame.showTrackingResult(projectionMatrix,trackable.getPoseMatrix());
 		}
 
 		myARGdxGame.render();
