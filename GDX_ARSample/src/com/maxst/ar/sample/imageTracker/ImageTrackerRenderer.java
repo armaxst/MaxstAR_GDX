@@ -5,6 +5,7 @@ package com.maxst.ar.sample.imageTracker;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
+import android.opengl.Matrix;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.maxst.ar.CameraDevice;
@@ -55,7 +56,7 @@ class ImageTrackerRenderer extends ApplicationAdapter {
 	public void resize(int width, int height) {
 		surfaceWidth = width;
 		surfaceHeight = height;
-		myARGdxGame.resize(width,height);
+		myARGdxGame.resize(width, height);
 		MaxstAR.onSurfaceChanged(width, height);
 	}
 
@@ -75,16 +76,29 @@ class ImageTrackerRenderer extends ApplicationAdapter {
 		float[] projectionMatrix = CameraDevice.getInstance().getProjectionMatrix();
 
 		GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-		for (int i = 0; i < trackingResult.getCount(); i++) {
-			Trackable trackable = trackingResult.getTrackable(i);
 
+		if (trackingResult.getCount() == 0) {
 			texturedCube.setProjectionMatrix(projectionMatrix);
-			texturedCube.setTransform(trackable.getPoseMatrix());
-			texturedCube.setTranslate(0, 0, -0.025f);
+			float [] identity = new float[16];
+			Matrix.setIdentityM(identity, 0);
+			texturedCube.setTransform(identity);
+			texturedCube.setTranslate(-0.15f, 0, 1.0f);
 			texturedCube.setScale(0.15f, 0.15f, 0.05f);
 			texturedCube.draw();
 
-			myARGdxGame.showTrackingResult(projectionMatrix,trackable.getPoseMatrix());
+			myARGdxGame.renderDefault(projectionMatrix, identity);
+		} else {
+			for (int i = 0; i < trackingResult.getCount(); i++) {
+				Trackable trackable = trackingResult.getTrackable(i);
+
+				texturedCube.setProjectionMatrix(projectionMatrix);
+				texturedCube.setTransform(trackable.getPoseMatrix());
+				texturedCube.setTranslate(0, 0, -0.025f);
+				texturedCube.setScale(0.15f, 0.15f, 0.05f);
+				texturedCube.draw();
+
+				myARGdxGame.showTrackingResult(projectionMatrix, trackable.getPoseMatrix());
+			}
 		}
 
 		myARGdxGame.render();
