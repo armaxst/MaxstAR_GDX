@@ -12,7 +12,7 @@ android {
 			jniLibs.srcDirs = ['libs']
 		}
 
-		instrumentTest.setRoot('tests')
+//		instrumentTest.setRoot('tests')
 	}
 	packagingOptions {
 		exclude 'META-INF/robovm/ios/robovm.xml'
@@ -125,4 +125,5 @@ idea {
 }
 dependencies {
 	implementation files('libs/MaxstAR.jar')
+	implementation files('libs/VideoPlayer.jar')
 }
